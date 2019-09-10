@@ -1,0 +1,33 @@
+{
+  "name": "vitamin-frontend-project-lvl2",
+  "version": "0.0.1",
+  "description": "",
+  "main": "index.js",
+  "bin": {
+    "gendiff": "dist/bin/gendiff.js"
+  },
+  "files": [
+    "dist"
+  ],
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "build": "NODE_ENV=production babel src --out-dir dist --source-maps inline",
+    "prepublishOnly": "npm run build"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/vitamin163/frontend-project-lvl2.git"
+  },
+  "author": "Vitaliy Domnin",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/vitamin163/frontend-project-lvl2/issues"
+  },
+  "homepage": "https://github.com/vitamin163/frontend-project-lvl2#readme",
+  "devDependencies": {
+    "@babel/cli": "^7.6.0",
+    "@babel/core": "^7.6.0",
+    "@babel/node": "^7.6.1",
+    "@babel/preset-env": "^7.6.0"
+  }
+}
