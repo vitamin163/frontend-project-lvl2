@@ -1,11 +1,17 @@
 {
   "name": "vitamin-frontend-project-lvl2",
   "version": "0.0.1",
-  "description": "",
+  "description": "Compares two configuration files and shows a difference",
   "main": "index.js",
   "bin": {
     "gendiff": "dist/bin/gendiff.js"
   },
+  "keywords": [
+    "hexlet",
+    "Compare",
+    "difference",
+    "CLI"
+  ],
   "files": [
     "dist"
   ],
@@ -33,5 +39,8 @@
     "eslint": "^6.3.0",
     "eslint-config-airbnb-base": "^14.0.0",
     "eslint-plugin-import": "^2.18.2"
+  },
+  "dependencies": {
+    "commander": "^3.0.1"
   }
 }
