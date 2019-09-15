@@ -2,7 +2,7 @@ install:
 	npm install
 
 start:
-	npx babel-node src/bin/gendiff ./src/input/before.json ./src/input/after.json
+	npx babel-node src/bin/gendiff ./__tests__/__fixtures__/inputFile/before.json ./__tests__/__fixtures__/inputFile/after.json
 
 publish:
 	npm publish --dry-run
