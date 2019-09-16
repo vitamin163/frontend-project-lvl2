@@ -7,8 +7,8 @@ export default (firstConfig, secondConfig) => {
   const pathToFirstFile = path.resolve('./', firstConfig);
   const pathToSecondFile = path.resolve('./', secondConfig);
 
-  const data1 = fs.readFileSync(pathToFirstFile, 'utf8');
-  const data2 = fs.readFileSync(pathToSecondFile, 'utf8');
+  const data1 = fs.readFileSync(pathToFirstFile, 'utf-8');
+  const data2 = fs.readFileSync(pathToSecondFile, 'utf-8');
 
   const obj1 = JSON.parse(data1);
   const obj2 = JSON.parse(data2);

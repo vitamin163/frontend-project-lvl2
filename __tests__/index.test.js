@@ -16,3 +16,15 @@ test('testFlatJsonAfterToBefore', () => {
     getdiff(`${pathToInputFile}/after.json`, `${pathToInputFile}/before.json`),
   ).toEqual(fs.readFileSync(`${pathToOutputFile}/afterToBefore.txt`, 'utf-8'));
 });
+
+test('testFlatYamlBeforetoAfter', () => {
+  expect(
+    getdiff(`${pathToInputFile}/before.yaml`, `${pathToInputFile}/after.yaml`),
+  ).toEqual(fs.readFileSync(`${pathToOutputFile}/beforeToAfter.txt`, 'utf-8'));
+});
+
+test('testFlatYamlAfterToBefore', () => {
+  expect(
+    getdiff(`${pathToInputFile}/after.yaml`, `${pathToInputFile}/before.yaml`),
+  ).toEqual(fs.readFileSync(`${pathToOutputFile}/afterToBefore.txt`, 'utf-8'));
+});
