@@ -1,17 +1,9 @@
 import _ from 'lodash';
-
-const fs = require('fs');
-const path = require('path');
+import parse from './parser';
 
 export default (firstConfig, secondConfig) => {
-  const pathToFirstFile = path.resolve('./', firstConfig);
-  const pathToSecondFile = path.resolve('./', secondConfig);
-
-  const data1 = fs.readFileSync(pathToFirstFile, 'utf-8');
-  const data2 = fs.readFileSync(pathToSecondFile, 'utf-8');
-
-  const obj1 = JSON.parse(data1);
-  const obj2 = JSON.parse(data2);
+  const obj1 = parse(firstConfig);
+  const obj2 = parse(secondConfig);
 
   const keys1 = Object.keys(obj1);
   const keys2 = Object.keys(obj2);
@@ -20,25 +12,21 @@ export default (firstConfig, secondConfig) => {
   const diff = keys.reduce(
     (acc, key) => {
       if (_.has(obj1, key) && _.has(obj2, key) && obj1[key] === obj2[key]) {
-        return [...acc, `    ${key}: ${obj1[key]}\n`];
+        return [...acc, `    ${key}: ${obj1[key]}`];
       }
       if (_.has(obj1, key) && _.has(obj2, key)) {
-        return [
-          ...acc,
-          `  + ${key}: ${obj2[key]}\n`,
-          `  - ${key}: ${obj1[key]}\n`,
-        ];
+        return [...acc, `  + ${key}: ${obj2[key]}`, `  - ${key}: ${obj1[key]}`];
       }
       if (!_.has(obj1, key) && _.has(obj2, key)) {
-        return [...acc, `  + ${key}: ${obj2[key]}\n`];
+        return [...acc, `  + ${key}: ${obj2[key]}`];
       }
       if (_.has(obj1, key) && !_.has(obj2, key)) {
-        return [...acc, `  - ${key}: ${obj1[key]}\n`];
+        return [...acc, `  - ${key}: ${obj1[key]}`];
       }
       return acc;
     },
-    ['{\n'],
+    ['{'],
   );
-  const result = [...diff, '}'].join('');
+  const result = [...diff, '}'].join('\n');
   return result;
 };

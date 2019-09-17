@@ -28,3 +28,9 @@ test('testFlatYamlAfterToBefore', () => {
     getdiff(`${pathToInputFile}/after.yaml`, `${pathToInputFile}/before.yaml`),
   ).toEqual(fs.readFileSync(`${pathToOutputFile}/afterToBefore.txt`, 'utf-8'));
 });
+
+test('differentFormat', () => {
+  expect(
+    getdiff(`${pathToInputFile}/before.yaml`, `${pathToInputFile}/after.json`),
+  ).toEqual(fs.readFileSync(`${pathToOutputFile}/beforeToAfter.txt`, 'utf-8'));
+});
