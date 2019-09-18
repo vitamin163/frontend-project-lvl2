@@ -1,10 +1,12 @@
 const yamlParse = require('js-yaml');
 const fs = require('fs');
 const path = require('path');
+const ini = require('ini');
 
 const fileType = {
   json: (file) => JSON.parse(file),
   yaml: (file) => yamlParse.load(file),
+  ini: (file) => ini.parse(file),
 };
 
 export default (file) => {

@@ -2,35 +2,27 @@ import path from 'path';
 import fs from 'fs';
 import getdiff from '../src';
 
-const pathToInputFile = path.resolve(__dirname, '__fixtures__/inputFile');
-const pathToOutputFile = path.resolve(__dirname, '__fixtures__/outputFile');
+const readFile = (pathToFile) => fs.readFileSync(pathToFile, 'utf-8');
 
-test('testFlatJsonBeforetoAfter', () => {
-  expect(
-    getdiff(`${pathToInputFile}/before.json`, `${pathToInputFile}/after.json`),
-  ).toEqual(fs.readFileSync(`${pathToOutputFile}/beforeToAfter.txt`, 'utf-8'));
-});
+const beforeJson = path.resolve(
+  __dirname,
+  '__fixtures__/inputFile/before.json',
+);
+const afterJson = path.resolve(__dirname, '__fixtures__/inputFile/after.json');
+const beforeIni = path.resolve(__dirname, '__fixtures__/inputFile/before.ini');
+const afterIni = path.resolve(__dirname, '__fixtures__/inputFile/after.ini');
 
-test('testFlatJsonAfterToBefore', () => {
-  expect(
-    getdiff(`${pathToInputFile}/after.json`, `${pathToInputFile}/before.json`),
-  ).toEqual(fs.readFileSync(`${pathToOutputFile}/afterToBefore.txt`, 'utf-8'));
-});
+const beforeToAfter = readFile(
+  path.resolve(__dirname, '__fixtures__/outputFile/beforeToAfter.txt'),
+);
+const afterToBefore = readFile(
+  path.resolve(__dirname, '__fixtures__/outputFile/afterToBefore.txt'),
+);
 
-test('testFlatYamlBeforetoAfter', () => {
-  expect(
-    getdiff(`${pathToInputFile}/before.yaml`, `${pathToInputFile}/after.yaml`),
-  ).toEqual(fs.readFileSync(`${pathToOutputFile}/beforeToAfter.txt`, 'utf-8'));
-});
-
-test('testFlatYamlAfterToBefore', () => {
-  expect(
-    getdiff(`${pathToInputFile}/after.yaml`, `${pathToInputFile}/before.yaml`),
-  ).toEqual(fs.readFileSync(`${pathToOutputFile}/afterToBefore.txt`, 'utf-8'));
-});
-
-test('differentFormat', () => {
-  expect(
-    getdiff(`${pathToInputFile}/before.yaml`, `${pathToInputFile}/after.json`),
-  ).toEqual(fs.readFileSync(`${pathToOutputFile}/beforeToAfter.txt`, 'utf-8'));
+test.each([
+  [beforeJson, afterJson, beforeToAfter],
+  [afterJson, beforeJson, afterToBefore],
+  [beforeIni, afterIni, beforeToAfter],
+])('.flatTest(%p, %p)', (a, b, expected) => {
+  expect(getdiff(a, b)).toEqual(expected);
 });
