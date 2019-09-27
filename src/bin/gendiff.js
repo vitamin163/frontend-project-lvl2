@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 
-import getdiff from '../getdiff';
+import getdiff from '..';
 
 const commander = require('commander');
 

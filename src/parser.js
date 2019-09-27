@@ -3,16 +3,16 @@ const fs = require('fs');
 const path = require('path');
 const ini = require('ini');
 
-const fileType = {
-  json: (file) => JSON.parse(file),
-  yaml: (file) => yamlParse.load(file),
-  ini: (file) => ini.parse(file),
+const formatType = {
+  json: (content) => JSON.parse(content),
+  yaml: (content) => yamlParse.load(content),
+  ini: (content) => ini.parse(content),
 };
 
-export default (file) => {
-  const pathToFile = path.resolve('./', file);
+export default (fileName) => {
+  const pathToFile = path.resolve('./', fileName);
   const content = fs.readFileSync(pathToFile, 'utf-8');
-  const type = file.split('.').pop();
-  const parse = fileType[type](content);
-  return parse;
+  const format = fileName.split('.').pop();
+  const parsed = formatType[format](content);
+  return parsed;
 };
