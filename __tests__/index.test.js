@@ -52,6 +52,9 @@ const afterToBefore = readFile(
 const deepBeforeToAfter = readFile(
   path.resolve(__dirname, '__fixtures__/outputFile/deepBeforeToAfter.txt'),
 );
+const outputPlainFormat = readFile(
+  path.resolve(__dirname, '__fixtures__/outputFile/plain.txt'),
+);
 
 test.each([
   [beforeJson, afterJson, beforeToAfter],
@@ -60,6 +63,10 @@ test.each([
   [deepBeforeJson, deepAfterJson, deepBeforeToAfter],
   [deepBeforeYaml, deepAfterYaml, deepBeforeToAfter],
   [deepBeforeIni, deepAfterIni, deepBeforeToAfter],
-])('.Test(%p, %p)', (a, b, expected) => {
-  expect(getdiff(a, b)).toEqual(expected);
+])('.testJsonFormat(%p, %p)', (a, b, expected) => {
+  expect(getdiff(a, b, 'default')).toEqual(expected);
+});
+
+test('testPlainFormat', () => {
+  expect(getdiff(deepBeforeJson, deepAfterJson, 'plain')).toEqual(outputPlainFormat);
 });
