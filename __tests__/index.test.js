@@ -56,6 +56,10 @@ const outputPlainFormat = readFile(
   path.resolve(__dirname, '__fixtures__/outputFile/plain.txt'),
 );
 
+const outputJsonFormat = readFile(
+  path.resolve(__dirname, '__fixtures__/outputFile/json.txt'),
+);
+
 test.each([
   [beforeJson, afterJson, beforeToAfter],
   [afterJson, beforeJson, afterToBefore],
@@ -69,4 +73,8 @@ test.each([
 
 test('testPlainFormat', () => {
   expect(getdiff(deepBeforeJson, deepAfterJson, 'plain')).toEqual(outputPlainFormat);
+});
+
+test('testJsonFormat', () => {
+  expect(getdiff(beforeJson, afterJson, 'json')).toEqual(outputJsonFormat);
 });
