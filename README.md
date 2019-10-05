@@ -14,14 +14,20 @@ $ npm install vitamin-frontend-project-lvl2 -g
 
 ## Use
 
-# Comparing flat JSON/YAML/INI files
+### Comparing flat JSON/YAML/INI files
 
 [![asciicast](https://asciinema.org/a/4rBIj9n6WHY5HQ2SYZMCUuPWs.svg)](https://asciinema.org/a/4rBIj9n6WHY5HQ2SYZMCUuPWs)
 
-# Recursive comparison for nested structures
+### Recursive comparison for nested structures
 
 [![asciicast](https://asciinema.org/a/2c5lPBOG8S1LpcN2h2kqT8jYE.svg)](https://asciinema.org/a/2c5lPBOG8S1LpcN2h2kqT8jYE)
 
+### Output format selection:
+#### plain
+[![asciicast](https://asciinema.org/a/fCuY3CA2SzXGBcdua1Gf3cTRd.svg)](https://asciinema.org/a/fCuY3CA2SzXGBcdua1Gf3cTRd)
+
+#### json
+[![asciicast](https://asciinema.org/a/N6eD3Tekbm6aCbKBay9x2B3vi.svg)](https://asciinema.org/a/N6eD3Tekbm6aCbKBay9x2B3vi)
 
 In project uses semantic versioning https://semver.org
 
