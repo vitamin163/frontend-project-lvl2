@@ -1,8 +1,10 @@
 const path = require('path');
 const fs = require('fs');
 
-export default (fileName) => {
+export const fileReading = (fileName) => {
   const pathToFile = path.resolve('./', fileName);
   const content = fs.readFileSync(pathToFile, 'utf-8');
   return content;
 };
+
+export const getFileNameExtension = (fileName) => path.extname(fileName);

@@ -1,15 +1,13 @@
-const path = require('path');
 const yamlParse = require('js-yaml');
 const ini = require('ini');
 
-const formatType = {
+const extensions = {
   '.json': (content) => JSON.parse(content),
   '.yaml': (content) => yamlParse.load(content),
   '.ini': (content) => ini.parse(content),
 };
 
-export default (fileName, content) => {
-  const format = path.extname(fileName);
-  const parsed = formatType[format](content);
+export default (fileNameExtension, content) => {
+  const parsed = extensions[fileNameExtension](content);
   return parsed;
 };
