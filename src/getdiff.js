@@ -1,58 +1,55 @@
 import _ from 'lodash';
 
-const buildAst = (obj1, obj2) => {
-  const keys1 = Object.keys(obj1);
-  const keys2 = Object.keys(obj2);
+const getDiff = (obj1, obj2) => {
+  const keys = Object.keys({ ...obj1, ...obj2 }).sort();
 
-  const keys = [...new Set([...keys1, ...keys2])].sort();
-  const propertyActions = [
+  const comparsion = [
     {
-      check: (arg) => obj1[arg] instanceof Object
-        && !Array.isArray(obj1[arg]) && obj2[arg] instanceof Object
-        && !Array.isArray(obj2[arg]),
+      check: (key) => _.isObject(obj1[key]) && !_.isArray(obj1[key])
+        && _.isObject(obj2[key]) && !_.isArray(obj2[key]),
       status: 'children',
-      oldVal: () => { },
-      newVal: (arg) => buildAst(obj1[arg], obj2[arg]),
+      oldValue: () => { },
+      newValue: (key) => getDiff(obj1[key], obj2[key]),
     },
     {
-      check: (arg) => !_.has(obj1, arg) && _.has(obj2, arg),
+      check: (key) => !_.has(obj1, key) && _.has(obj2, key),
       status: 'added',
-      oldVal: (arg) => obj1[arg],
-      newVal: (arg) => obj2[arg],
+      oldValue: (key) => obj1[key],
+      newValue: (key) => obj2[key],
     },
     {
-      check: (arg) => _.has(obj1, arg) && !_.has(obj2, arg),
+      check: (key) => _.has(obj1, key) && !_.has(obj2, key),
       status: 'removed',
-      oldVal: (arg) => obj1[arg],
-      newVal: (arg) => obj2[arg],
+      oldValue: (key) => obj1[key],
+      newValue: (key) => obj2[key],
     },
     {
-      check: (arg) => JSON.stringify(obj1[arg]) === JSON.stringify(obj2[arg]),
+      check: (key) => JSON.stringify(obj1[key]) === JSON.stringify(obj2[key]),
       status: 'unchanged',
-      oldVal: (arg) => obj1[arg],
-      newVal: (arg) => obj2[arg],
+      oldValue: (key) => obj1[key],
+      newValue: (key) => obj2[key],
     },
     {
-      check: (arg) => _.has(obj1, arg) && _.has(obj2, arg),
+      check: (key) => _.has(obj1, key) && _.has(obj2, key),
       status: 'changed',
-      oldVal: (arg) => obj1[arg],
-      newVal: (arg) => obj2[arg],
+      oldValue: (key) => obj1[key],
+      newValue: (key) => obj2[key],
     },
   ];
-  const getPropertyActions = (arg) => propertyActions.find(({ check }) => check(arg));
+  const compareData = (key) => comparsion.find(({ check }) => check(key));
 
-  const diff = keys.reduce(
+  const ast = keys.reduce(
     (acc, key) => {
-      const { status, oldVal, newVal } = getPropertyActions(key);
+      const { status, oldValue, newValue } = compareData(key);
       const node = {
-        key, status, oldValue: oldVal(key), newValue: newVal(key),
+        key, status, oldValue: oldValue(key), newValue: newValue(key),
       };
 
       return [...acc, node];
     },
     [],
   );
-  return diff;
+  return ast;
 };
 
-export default buildAst;
+export default getDiff;

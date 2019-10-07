@@ -3,10 +3,10 @@ const stringify = (value, depth) => {
   const indent = ' '.repeat(currentDepth * 4);
   const tab = ' '.repeat((currentDepth * 4) + 4);
   if (value instanceof Object) {
-    const valToStr = JSON.stringify(value).replace(/["]+/g, '').replace(/:|,/g, (match) => (match === ':' ? ': ' : ', '));
-    const firstBrace = valToStr[0];
-    const lastBrace = valToStr[valToStr.length - 1];
-    const body = valToStr.replace(/[{[\]}]+/g, '');
+    const valueToString = JSON.stringify(value).replace(/["]+/g, '').replace(/:|,/g, (match) => (match === ':' ? ': ' : ', '));
+    const firstBrace = valueToString[0];
+    const lastBrace = valueToString[valueToString.length - 1];
+    const body = valueToString.replace(/[{[\]}]+/g, '');
     return `${firstBrace}\n${tab}${body}\n${indent}${lastBrace}`;
   }
   return `${value}`;
@@ -20,30 +20,30 @@ const render = (ast, depth = 0) => {
   const nodeType = [
     {
       status: (arg) => arg === 'children',
-      process: (node, key, oldVal, newVal, accum) => [...accum, `\n${indent}${node[key]}: `, '{', ...render(node[newVal], currentDepth), `\n${indent}}`],
+      process: (node, key, oldValue, newValue, accum) => [...accum, `\n${indent}${node[key]}: `, '{', ...render(node[newValue], currentDepth), `\n${indent}}`],
     },
     {
       status: (arg) => arg === 'unchanged',
-      process: (node, key, oldVal, newVal, accum) => [
-        ...accum, `\n${indent}${node[key]}: `, stringify(node[oldVal], depth),
+      process: (node, key, oldValue, newValue, accum) => [
+        ...accum, `\n${indent}${node[key]}: `, stringify(node[oldValue], depth),
       ],
     },
     {
       status: (arg) => arg === 'changed',
-      process: (node, key, oldVal, newVal, accum) => [
-        ...accum, `\n${cutIndent}- ${node[key]}: `, stringify(node[oldVal], depth), `\n${cutIndent}+ ${node[key]}: `, stringify(node[newVal], depth),
+      process: (node, key, oldValue, newValue, accum) => [
+        ...accum, `\n${cutIndent}- ${node[key]}: `, stringify(node[oldValue], depth), `\n${cutIndent}+ ${node[key]}: `, stringify(node[newValue], depth),
       ],
     },
     {
       status: (arg) => arg === 'added',
-      process: (node, key, oldVal, newVal, accum) => [
-        ...accum, `\n${cutIndent}+ ${node[key]}: `, stringify(node[newVal], depth),
+      process: (node, key, oldValue, newValue, accum) => [
+        ...accum, `\n${cutIndent}+ ${node[key]}: `, stringify(node[newValue], depth),
       ],
     },
     {
       status: (arg) => arg === 'removed',
-      process: (node, key, oldVal, newVal, accum) => [
-        ...accum, `\n${cutIndent}- ${node[key]}: `, stringify(node[oldVal], depth),
+      process: (node, key, oldValue, newValue, accum) => [
+        ...accum, `\n${cutIndent}- ${node[key]}: `, stringify(node[oldValue], depth),
       ],
     },
   ];
