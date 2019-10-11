@@ -1,10 +1,11 @@
-const yamlParse = require('js-yaml');
-const ini = require('ini');
+import yamlParse from 'js-yaml';
+import ini from 'ini';
+
 
 const extensions = {
-  '.json': (content) => JSON.parse(content),
-  '.yaml': (content) => yamlParse.load(content),
-  '.ini': (content) => ini.parse(content),
+  '.json': JSON.parse,
+  '.yaml': yamlParse.safeLoad,
+  '.ini': ini.parse,
 };
 
 export default (fileNameExtension, content) => {

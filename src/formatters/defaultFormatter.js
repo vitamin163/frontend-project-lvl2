@@ -20,7 +20,7 @@ const render = (ast, depth = 0) => {
   const nodeType = [
     {
       status: (arg) => arg === 'children',
-      process: (node, key, oldValue, newValue, accum) => [...accum, `\n${indent}${node[key]}: `, '{', ...render(node[newValue], currentDepth), `\n${indent}}`],
+      process: (node, key, oldValue, newValue, accum, children) => [...accum, `\n${indent}${node[key]}: `, '{', ...render(node[children], currentDepth), `\n${indent}}`],
     },
     {
       status: (arg) => arg === 'unchanged',
@@ -55,9 +55,9 @@ const render = (ast, depth = 0) => {
   const result = ast.reduce(
     (acc, obj) => {
       const keys = Object.keys(obj);
-      const [key, status, oldValue, newValue] = keys;
+      const [key, status, oldValue, newValue, children] = keys;
       const { process } = checkType(obj[status]);
-      return process(obj, key, oldValue, newValue, acc);
+      return process(obj, key, oldValue, newValue, acc, children);
     },
     [''],
   );

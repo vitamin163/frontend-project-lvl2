@@ -12,8 +12,8 @@ const render = (ast, parent = 'Property \'') => {
   const nodeType = [
     {
       status: (arg) => arg === 'children',
-      process: (node, key, oldValue, newValue, accum) => [
-        ...accum, render(node[newValue], parent.concat(`${node[key]}.`)),
+      process: (node, key, oldValue, newValue, accum, children) => [
+        ...accum, render(node[children], parent.concat(`${node[key]}.`)),
       ],
     },
     {
@@ -47,9 +47,9 @@ const render = (ast, parent = 'Property \'') => {
   const result = ast.reduce(
     (acc, obj) => {
       const keys = Object.keys(obj);
-      const [key, status, oldValue, newValue] = keys;
+      const [key, status, oldValue, newValue, children] = keys;
       const { process } = checkType(obj[status]);
-      return process(obj, key, oldValue, newValue, acc);
+      return process(obj, key, oldValue, newValue, acc, children);
     },
     [],
   );

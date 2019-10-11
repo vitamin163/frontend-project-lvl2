@@ -1,6 +1,6 @@
 import getdiff from './getdiff';
 import parse from './parser';
-import formatter from './formatters/getFormatter';
+import render from './formatters';
 import { fileReading, getFileNameExtension } from './utils';
 
 export default (firstConfig, secondConfig, format) => {
@@ -8,8 +8,7 @@ export default (firstConfig, secondConfig, format) => {
   const secondFileExt = getFileNameExtension(secondConfig);
   const firstFileContent = fileReading(firstConfig);
   const secondFileContent = fileReading(secondConfig);
-  return formatter(
-    getdiff(parse(firstFileExt, firstFileContent),
-      parse(secondFileExt, secondFileContent)), format,
-  );
+  const parsedFirstConfig = parse(firstFileExt, firstFileContent);
+  const parsedSecondConfig = parse(secondFileExt, secondFileContent);
+  return render(getdiff(parsedFirstConfig, parsedSecondConfig), format);
 };

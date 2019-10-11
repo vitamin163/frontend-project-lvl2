@@ -4,9 +4,9 @@ import jsonFormatter from './jsonFormatter';
 
 export default (content, format) => {
   const formatType = {
-    default: (ast) => defaultFormatter(ast),
-    plain: (ast) => plainFormatter(ast),
-    json: (ast) => jsonFormatter(ast),
+    default: defaultFormatter,
+    plain: plainFormatter,
+    json: jsonFormatter,
   };
   return formatType[format](content);
 };

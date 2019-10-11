@@ -2,79 +2,28 @@ import path from 'path';
 import fs from 'fs';
 import getdiff from '../src';
 
-const readFile = (pathToFile) => fs.readFileSync(pathToFile, 'utf-8');
+const formats = ['json', 'yaml', 'ini'];
 
-const beforeJson = path.resolve(
-  __dirname,
-  '__fixtures__/inputFile/JSON/before.json',
-);
-const afterJson = path.resolve(__dirname, '__fixtures__/inputFile/JSON/after.json');
-const beforeIni = path.resolve(__dirname, '__fixtures__/inputFile/INI/before.ini');
-const afterIni = path.resolve(__dirname, '__fixtures__/inputFile/INI/after.ini');
+const getFixturePath = (name) => path.join(__dirname, '__fixtures__', name);
 
-const deepBeforeJson = path.resolve(
-  __dirname,
-  '__fixtures__/inputFile/JSON/deepBefore.json',
-);
-
-const deepAfterJson = path.resolve(
-  __dirname,
-  '__fixtures__/inputFile/JSON/deepAfter.json',
-);
-
-const deepBeforeYaml = path.resolve(
-  __dirname,
-  '__fixtures__/inputFile/YAML/deepBefore.yaml',
-);
-
-const deepAfterYaml = path.resolve(
-  __dirname,
-  '__fixtures__/inputFile/YAML/deepAfter.yaml',
-);
-
-const deepBeforeIni = path.resolve(
-  __dirname,
-  '__fixtures__/inputFile/INI/deepBefore.ini',
-);
-
-const deepAfterIni = path.resolve(
-  __dirname,
-  '__fixtures__/inputFile/INI/deepAfter.ini',
-);
-
-const beforeToAfter = readFile(
-  path.resolve(__dirname, '__fixtures__/outputFile/beforeToAfter.txt'),
-);
-const afterToBefore = readFile(
-  path.resolve(__dirname, '__fixtures__/outputFile/afterToBefore.txt'),
-);
-
-const deepBeforeToAfter = readFile(
-  path.resolve(__dirname, '__fixtures__/outputFile/deepBeforeToAfter.txt'),
-);
-const outputPlainFormat = readFile(
-  path.resolve(__dirname, '__fixtures__/outputFile/plain.txt'),
-);
-
-const outputJsonFormat = readFile(
-  path.resolve(__dirname, '__fixtures__/outputFile/json.txt'),
-);
-
-test.each([
-  [beforeJson, afterJson, beforeToAfter],
-  [afterJson, beforeJson, afterToBefore],
-  [beforeIni, afterIni, beforeToAfter],
-  [deepBeforeJson, deepAfterJson, deepBeforeToAfter],
-  [deepBeforeYaml, deepAfterYaml, deepBeforeToAfter],
-  [deepBeforeIni, deepAfterIni, deepBeforeToAfter],
-])('.testJsonFormat(%p, %p)', (a, b, expected) => {
-  expect(getdiff(a, b, 'default')).toEqual(expected);
+test.each(formats)('Comparison of nested structure %s', (format) => {
+  const deepBefore = getFixturePath(`deepBefore.${format}`);
+  const deepAfter = getFixturePath(`deepAfter.${format}`);
+  const deepBeforeToAfter = fs.readFileSync(getFixturePath('deepBeforeToAfter.txt'), 'utf-8');
+  expect(getdiff(deepBefore, deepAfter, 'default')).toEqual(deepBeforeToAfter);
 });
 
-test('testPlainFormat', () => {
-  expect(getdiff(deepBeforeJson, deepAfterJson, 'plain')).toEqual(outputPlainFormat);
-});
-
-test('testJsonFormat', () => {
-  expect(getdiff(beforeJson, afterJson, 'json')).toEqual(outputJsonFormat);
+test.each(formats)('Output format selection %s', (format) => {
+  const before = getFixturePath(`before.${format}`);
+  const after = getFixturePath(`after.${format}`);
+  const deepBefore = getFixturePath(`deepBefore.${format}`);
+  const deepAfter = getFixturePath(`deepAfter.${format}`);
+  const defaultFormat = fs.readFileSync(getFixturePath('beforeToAfter.txt'), 'utf-8');
+  const reverseDefaultFormat = fs.readFileSync(getFixturePath('afterToBefore.txt'), 'utf-8');
+  const plainFormat = fs.readFileSync(getFixturePath('plain.txt'), 'utf-8');
+  const jsonFormat = fs.readFileSync(getFixturePath('json.txt'), 'utf-8');
+  expect(getdiff(deepBefore, deepAfter, 'plain')).toEqual(plainFormat);
+  expect(getdiff(before, after, 'json')).toEqual(jsonFormat);
+  expect(getdiff(before, after, 'default')).toEqual(defaultFormat);
+  expect(getdiff(after, before, 'default')).toEqual(reverseDefaultFormat);
 });
