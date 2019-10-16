@@ -8,7 +8,7 @@ const extensions = {
   '.ini': ini.parse,
 };
 
-export default (fileNameExtension, content) => {
-  const parsed = extensions[fileNameExtension](content);
+export default (type, data) => {
+  const parsed = extensions[type](data);
   return parsed;
 };

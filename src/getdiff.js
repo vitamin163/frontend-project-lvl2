@@ -11,33 +11,31 @@ const getDiff = (obj1, obj2) => {
     {
       check: (key) => _.isObject(obj1[key]) && !_.isArray(obj1[key])
         && _.isObject(obj2[key]) && !_.isArray(obj2[key]),
-      status: 'children',
+      process: (key) => buildNode(key, 'nested', null, null, getDiff(obj1[key], obj2[key])),
     },
     {
       check: (key) => !_.has(obj1, key) && _.has(obj2, key),
-      status: 'added',
+      process: (key) => buildNode(key, 'added', obj1[key], obj2[key], null),
     },
     {
       check: (key) => _.has(obj1, key) && !_.has(obj2, key),
-      status: 'removed',
+      process: (key) => buildNode(key, 'removed', obj1[key], obj2[key], null),
     },
     {
       check: (key) => JSON.stringify(obj1[key]) === JSON.stringify(obj2[key]),
-      status: 'unchanged',
+      process: (key) => buildNode(key, 'unchanged', obj1[key], obj2[key], null),
     },
     {
       check: (key) => _.has(obj1, key) && _.has(obj2, key),
-      status: 'changed',
+      process: (key) => buildNode(key, 'changed', obj1[key], obj2[key], null),
     },
   ];
   const compareData = (key) => comparsion.find(({ check }) => check(key));
 
   const ast = keys.reduce(
     (acc, key) => {
-      const { status } = compareData(key);
-      const firstValue = obj1[key];
-      const secondValue = obj2[key];
-      const node = status === 'children' ? buildNode(key, status, null, null, getDiff(firstValue, secondValue)) : buildNode(key, status, firstValue, secondValue, null);
+      const { process } = compareData(key);
+      const node = process(key);
       return [...acc, node];
     },
     [],

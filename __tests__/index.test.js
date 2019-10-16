@@ -10,7 +10,7 @@ test.each(formats)('Comparison of nested structure %s', (format) => {
   const deepBefore = getFixturePath(`deepBefore.${format}`);
   const deepAfter = getFixturePath(`deepAfter.${format}`);
   const deepBeforeToAfter = fs.readFileSync(getFixturePath('deepBeforeToAfter.txt'), 'utf-8');
-  expect(getdiff(deepBefore, deepAfter, 'default')).toEqual(deepBeforeToAfter);
+  expect(getdiff(deepBefore, deepAfter, 'tree')).toEqual(deepBeforeToAfter);
 });
 
 test.each(formats)('Output format selection %s', (format) => {
@@ -24,6 +24,6 @@ test.each(formats)('Output format selection %s', (format) => {
   const jsonFormat = fs.readFileSync(getFixturePath('json.txt'), 'utf-8');
   expect(getdiff(deepBefore, deepAfter, 'plain')).toEqual(plainFormat);
   expect(getdiff(before, after, 'json')).toEqual(jsonFormat);
-  expect(getdiff(before, after, 'default')).toEqual(defaultFormat);
-  expect(getdiff(after, before, 'default')).toEqual(reverseDefaultFormat);
+  expect(getdiff(before, after, 'tree')).toEqual(defaultFormat);
+  expect(getdiff(after, before, 'tree')).toEqual(reverseDefaultFormat);
 });
