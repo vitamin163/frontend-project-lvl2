@@ -1,7 +1,7 @@
 import _ from 'lodash';
 
 const getDiff = (obj1, obj2) => {
-  const keys = Object.keys({ ...obj1, ...obj2 }).sort();
+  const keys = _.union(_.keys(obj1), _.keys(obj2)).sort();
 
   const buildNode = (key, status, oldValue, newValue, children) => ({
     key, status, oldValue, newValue, children,
@@ -32,13 +32,12 @@ const getDiff = (obj1, obj2) => {
   ];
   const compareData = (key) => comparsion.find(({ check }) => check(key));
 
-  const ast = keys.reduce(
-    (acc, key) => {
+  const ast = keys.map(
+    (key) => {
       const { process } = compareData(key);
       const node = process(key);
-      return [...acc, node];
+      return node;
     },
-    [],
   );
   return ast;
 };

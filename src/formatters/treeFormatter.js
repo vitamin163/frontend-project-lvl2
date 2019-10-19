@@ -17,45 +17,21 @@ const render = (ast, depth = 0) => {
   const indent = ' '.repeat(currentDepth * 4);
   const cutIndent = ' '.repeat((currentDepth * 4) - 2);
 
-  const nodeType = [
-    {
-      state: 'nested',
-      process: (node, key, oldValue, newValue, accum, children) => [...accum, `\n${indent}${node[key]}: `, '{', ...render(node[children], currentDepth), `\n${indent}}`],
-    },
-    {
-      state: 'unchanged',
-      process: (node, key, oldValue, newValue, accum) => [
-        ...accum, `\n${indent}${node[key]}: `, stringify(node[oldValue], depth),
-      ],
-    },
-    {
-      state: 'changed',
-      process: (node, key, oldValue, newValue, accum) => [
-        ...accum, `\n${cutIndent}- ${node[key]}: `, stringify(node[oldValue], depth), `\n${cutIndent}+ ${node[key]}: `, stringify(node[newValue], depth),
-      ],
-    },
-    {
-      state: 'added',
-      process: (node, key, oldValue, newValue, accum) => [
-        ...accum, `\n${cutIndent}+ ${node[key]}: `, stringify(node[newValue], depth),
-      ],
-    },
-    {
-      state: 'removed',
-      process: (node, key, oldValue, newValue, accum) => [
-        ...accum, `\n${cutIndent}- ${node[key]}: `, stringify(node[oldValue], depth),
-      ],
-    },
-  ];
+  const nodeType = {
+    nested: (node, key, oldValue, newValue, children) => [`\n${indent}${node[key]}: `, '{', ...render(node[children], currentDepth), `\n${indent}}`].join(''),
+    unchanged: (node, key, oldValue) => [`\n${indent}${node[key]}: ${stringify(node[oldValue], depth)}`],
+    changed: (node, key, oldValue, newValue) => [`\n${cutIndent}- ${node[key]}: ${stringify(node[oldValue], depth)}\n${cutIndent}+ ${node[key]}: ${stringify(node[newValue], depth)}`],
+    added: (node, key, oldValue, newValue) => [`\n${cutIndent}+ ${node[key]}: ${stringify(node[newValue], depth)}`],
+    removed: (node, key, oldValue) => [`\n${cutIndent}- ${node[key]}: ${stringify(node[oldValue], depth)}`],
+  };
 
-  const result = ast.reduce(
-    (acc, obj) => {
+  const result = ast.map(
+    (obj) => {
       const keys = Object.keys(obj);
       const [key, status, oldValue, newValue, children] = keys;
-      const { process } = nodeType.find(({ state }) => state === obj[status]);
-      return process(obj, key, oldValue, newValue, acc, children);
+      const type = obj[status];
+      return nodeType[type](obj, key, oldValue, newValue, children);
     },
-    [''],
   );
   return result;
 };

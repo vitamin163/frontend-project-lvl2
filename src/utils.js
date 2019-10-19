@@ -7,4 +7,4 @@ export const fileReader = (fileName) => {
   return content;
 };
 
-export const getFileNameExtension = (fileName) => path.extname(fileName);
+export const getFileNameExtension = (fileName) => path.extname(fileName).slice(1);
