@@ -1,7 +1,7 @@
 const stringify = (value, depth) => {
   const currentDepth = depth + 1;
-  const indent = ' '.repeat(currentDepth * 4);
-  const tab = ' '.repeat((currentDepth * 4) + 4);
+  const indent = `\n${' '.repeat(currentDepth * 4)}`;
+  const tab = `\n${' '.repeat((currentDepth * 4) + 4)}`;
   if (!(value instanceof Object)) {
     return `${value}`;
   }
@@ -9,31 +9,33 @@ const stringify = (value, depth) => {
   const firstBrace = valueToString[0];
   const lastBrace = valueToString[valueToString.length - 1];
   const body = valueToString.replace(/[{[\]}]+/g, '');
-  return `${firstBrace}\n${tab}${body}\n${indent}${lastBrace}`;
+  return `${firstBrace}${tab}${body}${indent}${lastBrace}`;
 };
 
 const render = (ast, depth = 0) => {
   const currentDepth = depth + 1;
-  const indent = ' '.repeat(currentDepth * 4);
-  const cutIndent = ' '.repeat((currentDepth * 4) - 2);
+  const indent = `\n${' '.repeat(currentDepth * 4)}`;
+  const cutIndent = `\n${' '.repeat((currentDepth * 4) - 2)}`;
+
+  const parts = [];
 
   const nodeType = {
-    nested: (node, key, oldValue, newValue, children) => [`\n${indent}${node[key]}: `, '{', ...render(node[children], currentDepth), `\n${indent}}`].join(''),
-    unchanged: (node, key, oldValue) => [`\n${indent}${node[key]}: ${stringify(node[oldValue], depth)}`],
-    changed: (node, key, oldValue, newValue) => [`\n${cutIndent}- ${node[key]}: ${stringify(node[oldValue], depth)}\n${cutIndent}+ ${node[key]}: ${stringify(node[newValue], depth)}`],
-    added: (node, key, oldValue, newValue) => [`\n${cutIndent}+ ${node[key]}: ${stringify(node[newValue], depth)}`],
-    removed: (node, key, oldValue) => [`\n${cutIndent}- ${node[key]}: ${stringify(node[oldValue], depth)}`],
+    nested: (oldValue, newValue, key, children) => `${indent}${key}: {${render(children, currentDepth)}${indent}}`,
+    unchanged: (oldValue, newValue, key) => `${indent}${key}: ${stringify(oldValue, depth)}`,
+    changed: (oldValue, newValue, key) => `${cutIndent}- ${key}: ${stringify(oldValue, depth)}${cutIndent}+ ${key}: ${stringify(newValue, depth)}`,
+    added: (oldValue, newValue, key) => `${cutIndent}+ ${key}: ${stringify(newValue, depth)}`,
+    removed: (oldValue, newValue, key) => `${cutIndent}- ${key}: ${stringify(oldValue, depth)}`,
   };
 
-  const result = ast.map(
-    (obj) => {
-      const keys = Object.keys(obj);
-      const [key, status, oldValue, newValue, children] = keys;
-      const type = obj[status];
-      return nodeType[type](obj, key, oldValue, newValue, children);
-    },
-  );
-  return result;
+  ast.reduce((acc, obj) => {
+    const {
+      key, status, oldValue, newValue, children,
+    } = obj;
+    acc.push(nodeType[status](oldValue, newValue, key, children));
+    return acc;
+  }, parts);
+
+  return parts.join('');
 };
 
 export default (ast) => ['{', ...render(ast), '\n}\n'].join('');

@@ -8,24 +8,26 @@ const stringify = (value) => {
   return `'${value}'`;
 };
 
-const render = (ast, parent = 'Property \'') => {
+const render = (ast, parent = '\nProperty \'') => {
   const nodeType = {
-    nested: (node, key, oldValue, newValue, children) => [render(node[children], parent.concat(`${node[key]}.`))].join(''),
-    changed: (node, key, oldValue, newValue) => [`\n${parent}${node[key]}' was updated. From ${stringify(node[oldValue])} to ${stringify(node[newValue])}`],
-    unchanged: () => [],
-    added: (node, key, oldValue, newValue) => [`\n${parent}${node[key]}' was added with value: ${stringify(node[newValue])}`],
-    removed: (node, key) => [`\n${parent}${node[key]}' was removed`],
+    nested: (oldValue, newValue, key, children) => render(children, parent.concat(`${key}.`)),
+    changed: (oldValue, newValue, key) => `${parent}${key}' was updated. From ${stringify(oldValue)} to ${stringify(newValue)}`,
+    unchanged: () => '',
+    added: (oldValue, newValue, key) => `${parent}${key}' was added with value: ${stringify(newValue)}`,
+    removed: (oldValue, newValue, key) => `${parent}${key}' was removed`,
   };
 
-  const result = ast.map(
-    (obj) => {
-      const keys = Object.keys(obj);
-      const [key, status, oldValue, newValue, children] = keys;
-      const type = obj[status];
-      return nodeType[type](obj, key, oldValue, newValue, children);
-    },
-  );
-  return result.join('');
+  const parts = [];
+
+  ast.reduce((acc, obj) => {
+    const {
+      key, status, oldValue, newValue, children,
+    } = obj;
+    acc.push(nodeType[status](oldValue, newValue, key, children));
+    return acc;
+  }, parts);
+
+  return parts.join('');
 };
 
 export default (ast) => render(ast).trim();
