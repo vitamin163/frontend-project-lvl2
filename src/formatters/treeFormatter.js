@@ -1,10 +1,7 @@
-const stringify = (value, depth, nested) => {
+const stringify = (value, depth) => {
   const currentDepth = depth + 1;
   const indent = ' '.repeat(currentDepth * 4);
   const tab = ' '.repeat((currentDepth * 4) + 4);
-  if (nested) {
-    return ['{', `${value}`, `${indent}}`].join('\n');
-  }
   if (!(value instanceof Object)) {
     return `${value}`;
   }
@@ -18,7 +15,7 @@ const render = (ast, depth = 0) => {
   const cutIndent = ' '.repeat((currentDepth * 4) - 2);
 
   const nodeType = {
-    nested: (oldValue, newValue, key, children) => `${indent}${key}: ${stringify(render(children, currentDepth), depth, 'nested')}`,
+    nested: (oldValue, newValue, key, children) => [`${indent}${key}: {`, render(children, currentDepth), `${indent}}`].join('\n'),
     unchanged: (oldValue, newValue, key) => `${indent}${key}: ${stringify(oldValue, depth)}`,
     changed: (oldValue, newValue, key) => [`${cutIndent}- ${key}: ${stringify(oldValue, depth)}`, `${cutIndent}+ ${key}: ${stringify(newValue, depth)}`],
     added: (oldValue, newValue, key) => `${cutIndent}+ ${key}: ${stringify(newValue, depth)}`,
