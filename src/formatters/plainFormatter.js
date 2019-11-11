@@ -12,7 +12,7 @@ const render = (ast, pathToNode = '') => {
   const nodeType = {
     nested: (oldValue, newValue, key, children) => render(children, `${pathToNode}${key}.`),
     changed: (oldValue, newValue, key) => `Property '${pathToNode}${key}' was updated. From ${stringify(oldValue)} to ${stringify(newValue)}`,
-    unchanged: () => '',
+    unchanged: () => null,
     added: (oldValue, newValue, key) => `Property '${pathToNode}${key}' was added with value: ${stringify(newValue)}`,
     removed: (oldValue, newValue, key) => `Property '${pathToNode}${key}' was removed`,
   };
@@ -24,7 +24,7 @@ const render = (ast, pathToNode = '') => {
     } = obj;
     return nodeType[status](oldValue, newValue, key, children);
   });
-  return result.filter((elem) => elem !== '').join('\n');
+  return result.filter((elem) => elem !== null).join('\n');
 };
 
 
