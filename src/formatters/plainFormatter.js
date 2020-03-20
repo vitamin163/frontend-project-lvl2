@@ -11,12 +11,15 @@ const stringify = (value) => {
 const render = (ast, pathToNode = '') => {
   const nodeType = {
     nested: (oldValue, newValue, key, children) => render(children, `${pathToNode}${key}.`),
-    changed: (oldValue, newValue, key) => `Property '${pathToNode}${key}' was updated. From ${stringify(oldValue)} to ${stringify(newValue)}`,
+    changed: (oldValue, newValue, key) => `Property '${pathToNode}${key}' was updated. From ${stringify(
+      oldValue,
+    )} to ${stringify(newValue)}`,
     unchanged: () => null,
-    added: (oldValue, newValue, key) => `Property '${pathToNode}${key}' was added with value: ${stringify(newValue)}`,
+    added: (oldValue, newValue, key) => `Property '${pathToNode}${key}' was added with value: ${stringify(
+      newValue,
+    )}`,
     removed: (oldValue, newValue, key) => `Property '${pathToNode}${key}' was removed`,
   };
-
 
   const result = ast.map((obj) => {
     const {
@@ -26,6 +29,5 @@ const render = (ast, pathToNode = '') => {
   });
   return result.filter((elem) => elem !== null).join('\n');
 };
-
 
 export default (ast) => render(ast).trim();
